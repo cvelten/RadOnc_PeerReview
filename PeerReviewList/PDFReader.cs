@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,7 +42,16 @@ namespace PeerReview
 			await Task.Run(() =>
 				{
 					using (var document = PdfDocument.Load(file.FullName, loadOptions))
-						foreach (var page in document.Pages) sb.AppendLine(page.Content.ToString());
+					{
+						try
+						{
+							foreach (var page in document.Pages) sb.AppendLine(page.Content.ToString());
+						}
+						catch (Exception ex)
+						{
+							ParseErrors.Add($"{file.FullName}: {ex.Message}");
+						}
+					}
 				}
 			);
 			return sb.ToString();
